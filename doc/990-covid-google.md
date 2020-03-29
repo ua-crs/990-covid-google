@@ -3,7 +3,7 @@
 ![Austral Ingenieria](https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQooGo7vQn4t9-6Bt46qZF-UY4_QFpYOeh7kVWzwpr_lbLr5wka)
 
 
-# Proyecto 37-google-sheet
+# Proyecto 990-covid-google
 
 ## Secciones
 
@@ -16,15 +16,13 @@
 
 ## Objetivo
 
->   Transferir los valores de presión y temperatura a una planilla Google (Google Sheet).
+>   Transferir los valores de temperatura a una planilla Google (Google Sheet).
 
 >   Los valores de presión y temperatura se obtienen de un sensor DHTxx
 
 >   La transferencia se realiza cada 15 minutos
 
 >   Durante los intervalos que no se informa, el ESPxx se mantiene en estado de baja energía
-
->   Usar _shield_ IAE
 
 >   En el caso de _ESP8266_ conectar un cable entre D0 y RST luego de cargar el programa
 
