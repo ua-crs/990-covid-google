@@ -14,7 +14,8 @@
 #include <ESP8266WiFi.h>
 #endif
 
-#include <DHT.h>
+#include <DallasTemperature.h>
+#include <OneWire.h>
 
 #include "wifi_ruts.h"
 
@@ -48,7 +49,11 @@ const unsigned CLIENT_TEST_MSECS = 100;
  *  Creación de objetos
  */
 
-DHT dht(DHTPIN, DHTTYPE);       // Inicializacion sensor DHT
+// Setup a oneWire instance to communicate with any OneWire devices
+OneWire oneWire(ONE_WIRE_BUS);
+
+// Pass our oneWire reference to Dallas Temperature sensor
+DallasTemperature sensors(&oneWire);
 
 /*
  *  Global variables
@@ -61,29 +66,17 @@ WiFiClient client;
 //  -------------- auxiliary functions ----------
 
 static int
-get_temphum( void )
+get_temp( void )
 {
-    float h,t,f;
+    float t;
 
-    h = dht.readHumidity();
-    t = dht.readTemperature();              // en grados Celsius
-    f = dht.readTemperature(true);          // en grados Fahrenheit
+    sensors.requestTemperatures();
 
-    if( isnan(h) || isnan(t) || isnan(f) )  //    verificar si cualquiera de las lecturas fracasaron
-    {
-        Serial.println(F("Error de lectura del sensor DHT"));
-        return 0;
-    }
-	else
-	{
-		dtostrf( t, 3, 1, tempC );
-		Serial.printf( "Temperatura = %s C\n\r", tempC );
-		dtostrf( f, 3, 1, tempF );
-		Serial.printf( "Temperatura = %s F\n\r", tempF );
-		dtostrf( h, 3, 1, hum ); 
-		Serial.printf( "Humedad = %s %%\n\r", hum );
-		return 1;
-	}
+    t = sensors.getTempCByIndex(0);
+
+	dtostrf( t, 3, 1, tempC );
+	Serial.printf( "Temperatura = %s C\n\r", tempC );
+    *tempF = *hum = '\0';
 }
 
 /*
@@ -129,7 +122,7 @@ makeIFTTTRequest( void )
 
     Serial.printf( "Request resource: %s\n\r", resource );
 
-	if( !get_temphum() )
+	if( !get_temp() )
 		return;
 
     send_json();
@@ -153,7 +146,7 @@ void
 setup( void )
 {
     Serial.begin(SERIAL_BAUD);
-    dht.begin();
+    sensors.begin();
 
     connect_wifi(MY_SSID, MY_PASS);
 	delay(500);
