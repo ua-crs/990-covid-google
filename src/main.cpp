@@ -75,8 +75,15 @@ get_temp( void )
     t = sensors.getTempCByIndex(0);
 
 	dtostrf( t, 3, 1, tempC );
+#if 0
+	dtostrf( t, 3, 1, tempF );
+	dtostrf( t, 3, 1, hum );
+#else
+    strcpy(tempF," ");
+    strcpy(hum," ");
+#endif
 	Serial.printf( "Temperatura = %s C\n\r", tempC );
-    *tempF = *hum = '\0';
+    return 1;
 }
 
 /*
@@ -135,7 +142,6 @@ makeIFTTTRequest( void )
 
     while( client.available() )
         Serial.write(client.read());
-
     Serial.println("\n\rclosing connection");
     client.stop();
 }
@@ -147,6 +153,7 @@ setup( void )
 {
     Serial.begin(SERIAL_BAUD);
     sensors.begin();
+    pinMode(D0, WAKEUP_PULLUP);
 
     connect_wifi(MY_SSID, MY_PASS);
 	delay(500);
@@ -155,7 +162,6 @@ setup( void )
     // start deep sleep for MINUTES_SLEEP minutes
     Serial.println("Going to sleep now");
     // enable timer deep sleep
-
     ESP.deepSleep(SLEEP_MICROS);
 
 }
@@ -163,4 +169,8 @@ setup( void )
 void
 loop( void )
 {
+#if 0
+    get_temp();
+    delay(1000);    
+#endif
 }
